@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<!--
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/Other/html.html to edit this template
+-->
+<html lang="en">
+<head>
+<title>Reservation System</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script
+src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+ <style>
+    *{
+        margin: 0;
+        padding: 0;
+        
+    }
+    body{
+        background: url("Railways1.jpg");
+        background-size: 125%;
+
+    }
+    div.main{
+        width:400px;
+        margin: 100px auto 0px auto ;
+    }
+    h2{
+        text-align: center;
+        padding: 20px;
+        font-family: sans-serif;
+    }
+    div.register{
+        background-color: rgba(0,0,0,0.5);
+        width: 100%;
+        font-size: 18px;
+        border-radius: 10px;
+        border:  1px solid rgba(255,255,255,0.3);
+        box-shadow: 2px 2px 15px
+        rgba(0,0,0,0.3);
+        color: #fff;
+    }
+    form#register{
+        margin: 40px;
+    }
+    label{
+        font-family: sans-serif;
+        font-size: 18px;
+        font-style: italic;   
+    }
+    input#name{
+        width: 300px;
+        border: 1px solid #ddd;
+        border-radius: 3px;
+        outline: 0;
+        padding: 3px;
+        background-color: #fff;
+        box-shadow: inset 1px 1px 5px
+        rgba(0,0,0,0.3)
+        
+    }
+  
+    label,span,h2{
+        text-shadow:1px 1px 5px 
+            rgba(0,0,0,0.3);
+    }
+</style>
+
+</head>
+<body>
+    
+    <div class="main">
+        <div class="register">
+            <h2> Train Reservation System Form </h2>
+            <form id="register" method="post">
+                
+                <label> Name : </label><br>
+                <input type="text" name="Fname" id="name" placeholder="Enter your name"><br><br>
+                
+                <label>Age : </label><br>
+                <input type="text" name="age" id="person_age" placeholder="Enter your age"><br><br>
+                
+                <label>Gender : </label><br>
+                <select id="gender">
+                    <option>Male </option>
+                    <option>Female </option>
+                </select>
+                <br><br>
+                
+                <label>Email : </label><br><!-- comment -->
+                <input type="text" name="email" id="person_mail" placeholder="Enter your mail"><br><br>
+                
+                <label for="doj">Date of Journey : </label><br>
+                <input type="date" id="doj" name="DOJ"><br><br>
+                
+                <label for="mob">Mobile : </label><br><!-- comment -->
+                <input type="text" id="mob" name="mobile"><br><br>
+                    
+                <label>class : </label><br>
+                <select id="cls">
+                    <option>AC Tier</option>
+                    <option>Sleeper</option>
+                    <option>2S</option>
+                </select><br><br><!-- comment -->
+
+                <label>Preference : </label><br><!-- comment -->
+                <select id="prefr">
+                    <option>Window Side</option>
+                    <option>Aisle Side</option>
+                </select><br><br><!-- comment -->
+                
+                <label> Payment Mode : </label><br>
+                
+                <select id="pay_md">
+                    <option>Debit Card</option>
+                    <option> UPI</option>
+                    
+                </select> <br><br>
+                
+                <input type="Submit" id="psngr_save" onclick="savePassenger()"> &nbsp;&nbsp;&nbsp;
+                <input type="button" value="Reset" id="details_reset" onclick="resetForm()">
+                
+        </div>
+    </div>
+    
+ <script>
+     
+ function validateAndGetFormData() {
+var Pers_name = $("#name").val();
+if (Pers_name === "") {
+alert("Person name Required Value");
+$("#name").focus();
+return "";
+}
+var Pers_age = $("#person_age").val();
+if (Pers_age === "") {
+alert("Passenger Age is Required Value");
+$("#person_age").focus();
+return "";
+}
+var Gender = $("#gender").val();
+if (Gender === "") {
+alert("Gender is Required Value");
+$("#gender").focus();
+return "";
+}
+var Email = $("#person_mail").val();
+if (Email === "") {
+alert("Email is Required Value");
+$("#person_mail").focus();
+return "";
+}
+var DOJ = $("#doj").val();
+if (DOJ === "") {
+alert("Date is Required Value");
+$("#doj").focus();
+return "";
+}
+var Mobile = $("#mob").val();
+if (Mobile === "") {
+alert("Mobile No. is Required Value");
+$("#mob").focus();
+return "";
+}
+var Class = $("#cls").val();
+if (Class === "") {
+alert("Please Select Class");
+$("#cls").focus();
+return "";
+}
+var Preference = $("#prefr").val();
+if (Preference === "") {
+alert("Please Select Preference");
+$("#prefr").focus();
+return "";
+}
+var Pay_md = $("#pay_md").val();
+if (Pay_md === "") {
+alert("Please select payment mode");
+$("#pay_md").focus();
+return "";
+}
+
+var jsonStrObj = {
+name : Pers_name,
+age : Pers_age,
+Gender: Gender,
+Email : Email,
+DOJ : DOJ,
+Mobile : Mobile,
+Class : Class,
+Preference : Preference,
+Payment_mode : Pay_md
+};
+return JSON.stringify(jsonStrObj);
+}
+
+function createPUTRequest(connToken, jsonObj, dbName, relName) {
+var putRequest = "{\n"
++ "\"token\" : \""
++ connToken
++ "\","
++ "\"dbName\": \""
++ dbName
++ "\",\n" + "\"cmd\" : \"PUT\",\n"
++ "\"rel\" : \""
++ relName + "\","
++ "\"jsonStr\": \n"
++ jsonObj
++ "\n"
++ "}";
+return putRequest;
+}
+
+function executeCommand(reqString, dbBaseUrl, apiEndPointUrl) {
+var url = dbBaseUrl + apiEndPointUrl;
+var jsonObj;
+$.post(url, reqString, function (result) {
+jsonObj = JSON.parse(result);
+}).fail(function (result) {
+var dataJsonObj = result.responseText;
+jsonObj = JSON.parse(dataJsonObj);
+});
+return jsonObj;
+}
+
+function resetForm() {
+$("#name").val("");
+$("#person_age").val("");
+$("#gender").val("");
+$("#person_mail").val("");
+$("#doj").val("");
+$("#mob").val("");
+$("#cls").val("");
+$("#prefr").val("");
+$("#pay_md").val("");
+$("#name").focus();
+}
+
+function savePassenger() {
+var jsonStr = validateAndGetFormData();
+if (jsonStr === "") {
+return;
+}
+
+var putReqStr = createPUTRequest("90937528|-31949294284845752|90942486",
+jsonStr, "Passenger", "Passenger-Rel");
+alert(putReqStr);
+jQuery.ajaxSetup({async: false});
+ var resultObj = executeCommand(putReqStr,"http://api.login2explore.com:5577", "/api/iml");
+ 
+alert(JSON.stringify(resultObj));
+jQuery.ajaxSetup({async: true});
+
+resetForm();
+
+}
+        </script>
+    </body>
+</html>
